@@ -38,20 +38,53 @@
 struct Sol {}
 
 impl Sol {
-    pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
-        return vec![vec![1], vec![2]];
+    pub fn three_sum(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+        nums.sort();
+
+        // let mut result_list: Vec<Vec<i32>> = Vec::from(vec![vec![]]);
+        // just init vec instead of adding a whole empty list
+        let mut result_list: Vec<Vec<i32>> = Vec::new();
+        let borrowed_list: &mut Vec<i32> = &mut nums;
+
+        for (idx, _num) in borrowed_list.iter().enumerate(){
+            if borrowed_list[idx] <= 0 && (idx == 0 || borrowed_list[idx] != borrowed_list[idx-1]){
+                Self::two_sum_two(borrowed_list, idx, &mut result_list)
+            }
+        }
+
+        return result_list;
+    }
+    
+    fn two_sum_two(nums: &Vec<i32>, idx: usize, result_list: &mut Vec<Vec<i32>>){
+        let mut left: usize = idx + 1;
+        let mut right: usize = nums.len()-1;
+
+        while left < right {
+            let sum: i32 = nums[idx] + nums[left] + nums[right];
+            
+            if sum < 0 {
+                left = left + 1;
+            } else if sum > 0 {
+                right = right - 1;
+            } else {
+                if sum == 0 {
+                    result_list.push(Vec::from(vec![nums[idx], nums[left], nums[right]]));
+                    left+=1; // increment to make sure we don't go out of bounds
+                    // in some scenarios
+                    while left < right && nums[left] == nums[left-1]{
+                        left = left + 1;
+                    }
+                }
+            }
+        }
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    // tests::test1();
+    // self::tests;
+    // self::tests::test1();
 }
-
-// How to solve notes:
-
-/*
-
-*/ 
 
 #[cfg(test)]
 mod tests {
@@ -59,17 +92,20 @@ mod tests {
     pub fn test1(){
         let test_vec: Vec<i32> = Vec::from(vec![-1,0,1,2,-1,-4]);
         let result: Vec<Vec<i32>> = Vec::from(vec![vec![-1,-1,2], vec![-1,0,1]]);
+        assert_eq!(super::Sol::three_sum(test_vec), result);
     }
 
     #[test]
     pub fn test2(){
         let test_vec: Vec<i32> = Vec::from(vec![0,1,1]);
-        let result: Vec<i32> = Vec::from(vec![]);
+        let result: Vec<Vec<i32>> = Vec::new();
+        assert_eq!(super::Sol::three_sum(test_vec), result);
     }
 
     #[test]
     pub fn test3(){
         let test_vec: Vec<i32> = Vec::from(vec![0,0,0]);
         let result: Vec<Vec<i32>> = Vec::from(vec![vec![0,0,0]]);
+        assert_eq!(super::Sol::three_sum(test_vec), result);
     }
 }
