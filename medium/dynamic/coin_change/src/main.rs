@@ -43,17 +43,16 @@ struct Sol {}
 
 impl Sol {
     pub fn coin_change(coins: Vec<i32>, amount: i32) -> i32 {
-        let mut amt: Vec<i32> = Vec::from(vec![amount + 1]);
-        amt.fill(amount+1);
-
+        // filling vector with amount + 1 up to amount + 1 size
+        let mut amt: Vec<i32> = Vec::from(vec![amount + 1; (amount + 1) as usize]);
         amt[0] = 0;
         let mut i: usize = 1;
-        while i < amount as usize {
-            let mut j = 0;
+        while i <= amount as usize {
+            let mut j: usize = 0;
             while j < coins.len(){
 
                 if i >= coins[j] as usize{
-                    amt[i] = std::cmp::min(amt[i], 1+amt[i-(coins[j] as usize)]);
+                    amt[i] = std::cmp::min(amt[i], 1+amt[(i as i32 - coins[j]) as usize]);    
                 }
 
                 j+=1;
@@ -77,7 +76,6 @@ fn main() {
 mod tests {
     use crate::Sol;
 
-    
     #[test]
     pub fn test1(){
         let expected = 3;
